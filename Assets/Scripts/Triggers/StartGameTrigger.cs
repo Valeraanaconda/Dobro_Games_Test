@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StarGameTrigger : MonoBehaviour
+public class StartGameTrigger : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {

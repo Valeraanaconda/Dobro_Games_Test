@@ -1,8 +1,11 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyVieldOfView : MonoBehaviour
+public class EnemyFieldOfView : MonoBehaviour
 {
+    public Action<EnemyFieldOfView> OnPlayerDetected;
+    
     [SerializeField] private Material _visionConeMaterial;
     [SerializeField] private float _visionRange;
     [SerializeField] private float _visionAngle;
@@ -12,7 +15,7 @@ public class EnemyVieldOfView : MonoBehaviour
     private Mesh _visionConeMesh;
     private MeshFilter _meshFilter;
 
-    void Start()
+    private void Start()
     {
         transform.AddComponent<MeshRenderer>().material = _visionConeMaterial;
         _meshFilter = transform.AddComponent<MeshFilter>();
@@ -20,12 +23,12 @@ public class EnemyVieldOfView : MonoBehaviour
         _visionAngle *= Mathf.Deg2Rad;
     }
 
-    void LateUpdate()
+    private void FixedUpdate()
     {
         DrawVisionCone();
     }
 
-    void DrawVisionCone()
+    private void DrawVisionCone()
     {
         int[] triangles = new int[(_visionConeResolution - 1) * 3];
         Vector3[] Vertices = new Vector3[_visionConeResolution + 1];
@@ -45,12 +48,17 @@ public class EnemyVieldOfView : MonoBehaviour
                     _visionObstructingLayer))
             {
                 Vertices[i + 1] = VertForward * hit.distance;
+                
+                if (hit.collider.CompareTag("Player"))
+                {
+                    OnPlayerDetected?.Invoke(this);
+                }
             }
             else
             {
                 Vertices[i + 1] = VertForward * _visionRange;
             }
-
+            
             Currentangle += angleIcrement;
         }
 

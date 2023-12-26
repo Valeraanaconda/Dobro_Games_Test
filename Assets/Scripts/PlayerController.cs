@@ -3,26 +3,41 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private FixedJoystick joystick;
-    [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private float turnSmoothTime = 0.1f;
-    [SerializeField] private float speed = 6f;
-
-    private float turnSmoothVelocity;
+    [SerializeField] private FixedJoystick _fixedJoystick;
+    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private float _turnSmoothTime = 0.1f;
+    [SerializeField] private float _speed = 6f;
     
-    void Update()
+    private float turnSmoothVelocity;
+    private bool canMove = true;
+
+    private void Update()
     {
-        Vector3 moveDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical).normalized;
-
-        if (moveDirection.magnitude >= 0.1f)
+        if (canMove)
         {
-            float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            Vector3 moveDirection = new Vector3(_fixedJoystick.Horizontal, 0, _fixedJoystick.Vertical).normalized;
 
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            if (moveDirection.magnitude >= 0.1f)
+            {
+                float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
+                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, _turnSmoothTime);
 
-            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            agent.Move(moveDir.normalized * (speed * Time.deltaTime));
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+                Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                _agent.Move(moveDir.normalized * (_speed * Time.deltaTime));
+            }
         }
+    }
+
+    public void StopMovement()
+    {
+        canMove = false;
+        _agent.velocity = Vector3.zero;
+    }
+
+    public void ResumeMovement()
+    {
+        canMove = true;
     }
 }
