@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    private const string WIN_TEXT = "Win";
+    private const string WIN_TEXT = "Win!";
     private const string LOSE_TEXT = "Lose";
     [SerializeField] private Button _restartButton;
     [SerializeField] private TextMeshProUGUI _resultText;

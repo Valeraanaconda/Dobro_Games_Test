@@ -1,10 +1,10 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     public static Action<Transform> OnShoot;
+    
     [SerializeField] private EnemyService _enemyService;
     [SerializeField] private PlayerController _playerController;
     

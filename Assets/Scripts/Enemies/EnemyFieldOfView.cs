@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemyFieldOfView : MonoBehaviour
 {
+    private const string PLAYER_TAG = "Player";
+    
     public Action<EnemyFieldOfView> OnPlayerDetected;
     
     [SerializeField] private Material _visionConeMaterial;
@@ -49,7 +51,7 @@ public class EnemyFieldOfView : MonoBehaviour
             {
                 Vertices[i + 1] = VertForward * hit.distance;
                 
-                if (hit.collider.CompareTag("Player"))
+                if (hit.collider.CompareTag(PLAYER_TAG))
                 {
                     OnPlayerDetected?.Invoke(this);
                 }
