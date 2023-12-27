@@ -25,14 +25,17 @@ public class EnemyService : MonoBehaviour
         Joystick.OnMove += UpdatePlayerHideStatus;
     }
 
-    private  void StopEnemyPatrolling()
+    private void StopEnemyPatrolling()
     {
         _enemyDetected.EnemyPatrol.StopPatrolling();
     }
 
     public void ResumeEnemyPatrolling()
     {
-        _enemyDetected.EnemyPatrol.ResumePatrolling();
+        if (_enemyDetected != null)
+        {
+            _enemyDetected.EnemyPatrol.ResumePatrolling();
+        }
     }
 
     public void ShootPlayer(Transform target)
@@ -60,7 +63,7 @@ public class EnemyService : MonoBehaviour
 }
 
 [Serializable]
-public struct Enemy
+public class Enemy
 {
     public EnemyPatrol EnemyPatrol;
     public List<EnemyFieldOfView> EnemiesFows;
