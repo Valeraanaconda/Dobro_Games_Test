@@ -3,6 +3,7 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
+    //todo event when player lose
     [SerializeField] private FixedJoystick _fixedJoystick;
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private float _turnSmoothTime = 0.1f;

@@ -4,29 +4,35 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    private const string WIN_TEXT = "Win";
+    private const string LOSE_TEXT = "Lose";
     [SerializeField] private Button _restartButton;
     [SerializeField] private TextMeshProUGUI _resultText;
 
     private void Start()
     {
-        EndGameTrigger.OnWin += ShowWin;
         _restartButton.onClick.AddListener(RestartClickHandler);
+        EndGameTrigger.OnWin += ShowWin;
+        EnemyService.OnPlayerLose += ShowLose;
     }
 
     private void ShowWin()
     {
-        _resultText.text = "Win";
+        _resultText.text = WIN_TEXT;
         _resultText.gameObject.SetActive(true);
+        _restartButton.gameObject.SetActive(true);
     }
 
-    public void ShowLose()
+    private void ShowLose()
     {
-        _resultText.text = "Lose";
+        _resultText.text = LOSE_TEXT;
         _resultText.gameObject.SetActive(true);
+        _restartButton.gameObject.SetActive(true);
     }
 
-    public void RestartClickHandler()
+    private void RestartClickHandler()
     {
         _resultText.gameObject.SetActive(false);
+        _restartButton.gameObject.SetActive(false);
     }
 }

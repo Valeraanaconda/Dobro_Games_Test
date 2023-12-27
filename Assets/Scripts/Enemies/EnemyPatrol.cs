@@ -7,16 +7,15 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private Transform[] _waypoints;
     [SerializeField] private float _patrolSpeed = 3.0f;
     [SerializeField] private float _waypointWaitTime = 2.0f;
+    [SerializeField] private EnemyAnimationController _enemyAnimation;
     
     private int _currentWaypoint;
     private NavMeshAgent _agent;
-    private Animator _animator;
     private bool _isWaiting;
 
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
         SetDestination();
     }
 
@@ -40,7 +39,7 @@ public class EnemyPatrol : MonoBehaviour
             _agent.speed = _patrolSpeed;
             _agent.SetDestination(_waypoints[_currentWaypoint].position);
             
-            _animator.SetBool("IsWalking", true);
+            _enemyAnimation.SetWalkingState(true);
         }
     }
 
@@ -54,7 +53,7 @@ public class EnemyPatrol : MonoBehaviour
     {
         _isWaiting = true;
         
-        _animator.SetBool("IsWalking", false);
+        _enemyAnimation.SetWalkingState(false);
 
         yield return new WaitForSeconds(_waypointWaitTime);
         SetNextWaypoint();
@@ -65,17 +64,24 @@ public class EnemyPatrol : MonoBehaviour
     {
         StopAllCoroutines();
         _agent.isStopped = true;
-        _animator.SetBool("IsWalking", false);
+        _enemyAnimation.SetWalkingState(true);
         _isWaiting = false;
     }
     
     public void ResumePatrolling()
     {
-        if (!_agent.isActiveAndEnabled)
+        if (_agent.isStopped && _isWaiting)
         {
+            _isWaiting = false;
             _agent.isStopped = false;
+            _enemyAnimation.SetShootingState(false);
             SetDestination();
         }
+    }
+
+    public void Shoot()
+    {
+        _enemyAnimation.SetShootingState(true);
     }
 }
 

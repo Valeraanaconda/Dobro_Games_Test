@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class EnemyService : MonoBehaviour
 {
+    public static Action OnPlayerLose;
+
     [SerializeField] private List<Enemy> _enemies;
-    
-    private Enemy _enemy;
+
+    private Enemy _enemyDetected;
     private bool _playerIsHide;
-    
+
     private void Start()
     {
         foreach (var enemy in _enemies)
@@ -19,31 +21,33 @@ public class EnemyService : MonoBehaviour
                 fieldOfView.OnPlayerDetected += EnemyDetected;
             }
         }
-        
+
         Joystick.OnMove += UpdatePlayerHideStatus;
     }
 
-    public void StopEnemiesPatrolling()
+    private  void StopEnemyPatrolling()
     {
-        foreach (var enemy in _enemies)
-        {
-            enemy.EnemyPatrol.StopPatrolling();
-        }
+        _enemyDetected.EnemyPatrol.StopPatrolling();
     }
-    
-    public void ResumeEnemiesPatrolling()
+
+    public void ResumeEnemyPatrolling()
     {
-        foreach (var enemy in _enemies)
-        {
-            enemy.EnemyPatrol.ResumePatrolling();
-        }
+        _enemyDetected.EnemyPatrol.ResumePatrolling();
     }
-    
+
+    public void ShootPlayer(Transform target)
+    {
+        StopEnemyPatrolling();
+        _enemyDetected.EnemyPatrol.gameObject.transform.LookAt(target);
+        _enemyDetected.EnemyPatrol.Shoot();
+    }
+
     private void EnemyDetected(EnemyFieldOfView view)
     {
         if (!_playerIsHide)
         {
-            _enemy = FindEnemy(view);
+            _enemyDetected = FindEnemy(view);
+            OnPlayerLose?.Invoke();
         }
     }
 
@@ -51,7 +55,7 @@ public class EnemyService : MonoBehaviour
     {
         return _enemies.FirstOrDefault(enemy => enemy.EnemiesFows.Contains(view));
     }
-    
+
     private void UpdatePlayerHideStatus(bool value) => _playerIsHide = value;
 }
 
